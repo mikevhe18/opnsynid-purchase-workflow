@@ -6,7 +6,8 @@
     'name': 'Purchase Request Type',
     'version': '8.0.1.0.0',
     'summary': 'Add order type to purchase request',
-    'author': 'OpenSynergy Indonesia,Odoo Community Association (OCA)',
+    'author': 'Michael Viriyananda, Andhitia Rama, '
+              'OpenSynergy Indonesia',
     'website': 'https://opensynergy-indonesia.com',
     'category': 'Purchase Management',
     'depends': [
