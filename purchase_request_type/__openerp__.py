@@ -14,7 +14,10 @@
         'purchase_request',
         'purchase_order_type'
     ],
-    'data': ['views/purchase_request_view.xml'],
+    'data': [
+        'views/purchase_request_view.xml',
+        'views/purchase_request_line_view.xml'
+    ],
     'installable': True,
     'license': 'AGPL-3',
 }
