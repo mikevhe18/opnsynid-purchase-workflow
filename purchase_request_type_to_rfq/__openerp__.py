@@ -10,6 +10,7 @@
     'website': 'https://opensynergy-indonesia.com',
     'category': 'Purchase Management',
     'depends': [
+        'purchase_request_type',
         'purchase_request_to_rfq'
     ],
     'data': [
