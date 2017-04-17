@@ -19,9 +19,10 @@ class PurchaseRequisition(models.Model):
         "order_type.cancel_requisition_group_ids"
     )
     def _compute_policy(self):
-        obj_purchase_order_type = self.env["purchase.order.type"]
+        user_id = self.env.user.id
         for requisition in self:
-            if self.env.user.id == SUPERUSER_ID:
+            order_type = requisition.order_type
+            if user_id == SUPERUSER_ID or not order_type:
                 requisition.sent_supplier_ok = True
                 requisition.open_bid_ok = True
                 requisition.tender_reset_ok = True
@@ -30,19 +31,6 @@ class PurchaseRequisition(models.Model):
                 requisition.cancel_requisition_ok = True
                 continue
 
-            order_type_id = requisition.order_type.id
-
-            if not order_type_id:
-                requisition.sent_supplier_ok = True
-                requisition.open_bid_ok = True
-                requisition.tender_reset_ok = True
-                requisition.open_product_ok = True
-                requisition.generate_po_ok = True
-                requisition.cancel_requisition_ok = True
-                continue
-
-            order_type =\
-                obj_purchase_order_type.browse([order_type_id])[0]
             requisition.sent_supplier_ok =\
                 self._button_policy(order_type, 'sent_supplier')
             requisition.open_bid_ok =\
@@ -58,9 +46,9 @@ class PurchaseRequisition(models.Model):
 
     @api.model
     def _button_policy(self, order_type, button_type):
-        result = False
         user = self.env.user
         group_ids = user.groups_id.ids
+        button_group_ids = []
 
         if button_type == 'sent_supplier':
             button_group_ids = order_type.sent_supplier_group_ids.ids
@@ -75,11 +63,13 @@ class PurchaseRequisition(models.Model):
         elif button_type == 'cancel_requisition':
             button_group_ids = order_type.cancel_requisition_group_ids.ids
 
-        if not button_group_ids:
-            result = True
-        else:
+        if button_group_ids:
             if (set(button_group_ids) & set(group_ids)):
                 result = True
+            else:
+                result = False
+        else:
+            result = True
         return result
 
     sent_supplier_ok = fields.Boolean(
